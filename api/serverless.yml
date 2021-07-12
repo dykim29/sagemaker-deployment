@@ -1,0 +1,24 @@
+service: sentimentmodel-api
+
+provider:
+  name: aws
+  runtime: python3.8
+  stage: ${opt:stage, 'dev'}
+  region: eu-west-1
+  profile: personal
+  iam:
+    role:
+      statements:
+        - Effect: 'Allow'
+          Action:
+            - 'sagemaker:InvokeEndpoint'
+          Resource: '*'
+functions:
+  lambda_handler:
+    handler: handler.lambda_handler
+    events:
+      - http:
+          path: /v1/app/model
+          method: post
+    description: API endpoint for triggering SageMaker inference endpoint and geting predictions
+    memorySize: 128
